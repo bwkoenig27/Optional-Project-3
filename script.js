@@ -210,6 +210,8 @@ function draw() {
     drawBall();
     updateBallPosition();
     drawScoreboard();
+    drawFruits();
+    checkFruitCollisions();
 
     if (!scoreEffectActive) { // Only handle inputs if not showing score effect
         handlePaddleInput();
@@ -220,3 +222,84 @@ function draw() {
 
     animationFrameId = requestAnimationFrame(draw);
 }
+
+// Fruit Settings
+const FRUIT_SIZE = 100; // Display size for fruits
+let activeFruit = null;
+
+const fruits = [
+    { name: "apple", effect: "speedUpBall", duration: 10000 },
+    { name: "banana", effect: "shrinkPaddles", duration: 10000 }
+];
+
+const fruitImages = {};
+fruits.forEach(fruit => {
+    let img = new Image();
+    img.src = `${fruit.name}.png`; // Ensure the file path is correct
+    img.onload = () => fruitImages[fruit.name] = img;
+    img.onerror = () => console.error('Failed to load image:', fruit.name);
+});
+
+function spawnFruit() {
+    if (!activeFruit) {
+        let fruitType = fruits[Math.floor(Math.random() * fruits.length)];
+        activeFruit = {
+            ...fruitType,
+            x: Math.random() * (canvas.width - FRUIT_SIZE) + FRUIT_SIZE / 2,
+            y: Math.random() * (canvas.height - FRUIT_SIZE) + FRUIT_SIZE / 2
+        };
+        setTimeout(() => { activeFruit = null; }, 7000); // Remove fruit after 7 seconds
+    }
+}
+
+function drawFruits() {
+    if (activeFruit) {
+        let fruit = fruitImages[activeFruit.name];
+        if (fruit) {
+            ctx.drawImage(fruit, activeFruit.x - FRUIT_SIZE / 2, activeFruit.y - FRUIT_SIZE / 2, FRUIT_SIZE, FRUIT_SIZE);
+        }
+    }
+}
+
+function checkFruitCollisions() {
+    if (activeFruit) {
+        let fruitRect = {
+            left: activeFruit.x - FRUIT_SIZE / 2,
+            right: activeFruit.x + FRUIT_SIZE / 2,
+            top: activeFruit.y - FRUIT_SIZE / 2,
+            bottom: activeFruit.y + FRUIT_SIZE / 2
+        };
+        let ballRect = {
+            left: ballX - ballRadius,
+            right: ballX + ballRadius,
+            top: ballY - ballRadius,
+            bottom: ballY + ballRadius
+        };
+        if (ballRect.right > fruitRect.left && ballRect.left < fruitRect.right &&
+            ballRect.bottom > fruitRect.top && ballRect.top < fruitRect.bottom) {
+            applyFruitEffect(activeFruit.effect, activeFruit.duration);
+            activeFruit = null;
+        }
+    }
+}
+
+function applyFruitEffect(effect, duration) {
+    switch (effect) {
+        case "speedUpBall":
+            dx *= 1.5;
+            dy *= 1.5;
+            setTimeout(() => {
+                dx /= 1.5;
+                dy /= 1.5;
+            }, duration);
+            break;
+        case "shrinkPaddles":
+            paddleHeight /= 2;
+            setTimeout(() => {
+                paddleHeight *= 2;
+            }, duration);
+            break;
+    }
+}
+
+setInterval(spawnFruit, 10000); // Spawn fruits every 10 seconds
