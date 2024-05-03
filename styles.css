@@ -46,3 +46,17 @@ button {
     color: #FF0000; /* Red color for Player 2 */
 }
 
+input[type="checkbox"] {
+    accent-color: #0095DD; /* Changes the checkbox color to match the button styles */
+    margin-right: 5px;
+}
+
+label {
+    color: white; /* Ensures the label text is visible against the dark background */
+    font-family: 'Press Start 2P', cursive;
+    font-size: 16px;
+    display: flex;
+    align-items: center; /* Aligns the text and checkbox nicely */
+    justify-content: center; /* Centers the content horizontally */
+    margin-top: 10px; /* Add some top margin for spacing */
+}

@@ -30,6 +30,7 @@ let scoreEffectOpacity = 1.0;
 let animationFrameId = null;
 let lastCollision = null;
 
+
 function drawScoringEffect(player) {
     const flashDuration = 500; 
     const flashColor = player === "player1" ? "#00FF00" : "#FF0000";
@@ -196,16 +197,18 @@ function displayWinner() {
 }
 
 function handlePaddleInput() {
-    if (wPressed) {
-        paddleYLeft = Math.max(paddleYLeft - 5, 0);
-    } else if (sPressed) {
-        paddleYLeft = Math.min(paddleYLeft + 5, canvas.height - paddleHeight);
-    }
-
-    if (upPressed) {
-        paddleYRight = Math.max(paddleYRight - 5, 0);
-    } else if (downPressed) {
-        paddleYRight = Math.min(paddleYRight + 5, canvas.height - paddleHeight);
+    if (aiMode) {
+        // AI controls the left paddle
+        aiControlPaddle();
+        // Player controls the right paddle
+        if (upPressed) paddleYRight = Math.max(paddleYRight - 5, 0);
+        if (downPressed) paddleYRight = Math.min(paddleYRight + 5, canvas.height - paddleHeight);
+    } else {
+        // Player controls both paddles in two-player mode
+        if (wPressed) paddleYLeft = Math.max(paddleYLeft - 5, 0);
+        if (sPressed) paddleYLeft = Math.min(paddleYLeft + 5, canvas.height - paddleHeight);
+        if (upPressed) paddleYRight = Math.max(paddleYRight - 5, 0);
+        if (downPressed) paddleYRight = Math.min(paddleYRight + 5, canvas.height - paddleHeight);
     }
 }
 function draw() {
@@ -290,11 +293,11 @@ function checkFruitCollisions() {
 function applyFruitEffect(effect, duration) {
     switch (effect) {
         case "speedUpBall":
-            dx *= 1.5;
-            dy *= 1.5;
+            dx *= 2;
+            dy *= 2;
             setTimeout(() => {
-                dx /= 1.5;
-                dy /= 1.5;
+                dx /= 2;
+                dy /= 2;
             }, duration);
             break;
         case "shrinkPaddles":
@@ -323,3 +326,54 @@ function applyFruitEffect(effect, duration) {
 }
 
 setInterval(spawnFruit, 8000); // Spawn fruits every 10 seconds
+
+let aiMode = false;
+const aiModeToggle = document.getElementById('aiModeToggle');
+
+document.getElementById('aiModeToggle').addEventListener('change', function() {
+    aiMode = this.checked;
+    if(aiMode) {
+        console.log("AI Mode Enabled");
+        // Additional logic to activate AI control
+    } else {
+        console.log("AI Mode Disabled");
+        // Additional logic to revert to normal player control
+    }
+});
+
+function pauseGame() {
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+    }
+}
+
+function startGameWithPlayer() {
+    resetGame();
+    draw();
+}
+
+function startGameWithAI() {
+    resetGame();
+    draw();
+}
+
+function resetGame() {
+    scoreLeft = 0;
+    scoreRight = 0;
+    ballX = canvas.width / 2;
+    ballY = canvas.height / 2;
+    dx = 2;
+    dy = 2;
+    paddleYLeft = (canvas.height - paddleHeight) / 2;
+    paddleYRight = (canvas.height - paddleHeight) / 2;
+}
+
+function aiControlPaddle() {
+    // Simple AI to control the left paddle
+    if (ballY > paddleYLeft + paddleHeight / 2 + 10) {
+        paddleYLeft = Math.min(paddleYLeft + 5, canvas.height - paddleHeight);
+    } else if (ballY < paddleYLeft + paddleHeight / 2 - 10) {
+        paddleYLeft = Math.max(paddleYLeft - 5, 0);
+    }
+}
