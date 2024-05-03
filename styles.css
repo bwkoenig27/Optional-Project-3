@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 #gameContainer {
     width: 800px;
     margin: auto;
@@ -14,7 +16,33 @@
 }
 
 #scoreBoard {
+    width: 100%;
+    text-align: center;
+    color: #fbfcfb;
+    font-size: 24px;
+    font-family: 'Press Start 2P', cursive;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    padding: 10px 0;
+    border-radius: 8px;
     margin-top: 10px;
-    color: #fff;
-    font-size: 20px;
 }
+
+button {
+    margin: 5px;
+    padding: 8px 16px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    background-color: #0095DD;
+    color: white;
+    border-radius: 5px;
+}
+
+#score1 {
+    color: #00FF00; /* Green color for Player 1 */
+}
+
+#score2 {
+    color: #FF0000; /* Red color for Player 2 */
+}
+
