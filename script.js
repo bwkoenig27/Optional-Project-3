@@ -28,6 +28,7 @@ let maxScoreEffectRadius = 50; // Maximum size of the circle effect
 let scoreEffectOpacity = 1.0;
 
 let animationFrameId = null;
+let lastCollision = null;
 
 function drawScoringEffect(player) {
     const flashDuration = 500; 
@@ -152,32 +153,35 @@ function updateBallPosition() {
     ballY += dy;
 
     if (scoreLeft >= 11 || scoreRight >= 11) {
-        displayWinner(); // Display the winner screen
-        return; // Stop the game loop
+        displayWinner();
+        return; // Stop the game loop if a player wins
     }
 
     // Left and right wall collision
     if (ballX + dx > canvas.width - ballRadius || ballX + dx < ballRadius) {
         if (ballY > paddleYRight && ballY < paddleYRight + paddleHeight && dx > 0) {
             dx = -dx;
+            lastCollision = "player1";  // Right paddle last hit the ball
         } else if (ballY > paddleYLeft && ballY < paddleYLeft + paddleHeight && dx < 0) {
             dx = -dx;
+            lastCollision = "player2";  // Left paddle last hit the ball
         } else {
             if (dx > 0) {
                 scoreLeft++;
-                drawScoringEffect("player2"); // Left player scores
+                drawScoringEffect("player2");
+                lastCollision = "player2";
             } else {
                 scoreRight++;
-                drawScoringEffect("player1"); // Right player scores
+                drawScoringEffect("player1");
+                lastCollision = "player1";
             }
-            // Reset the ball to the center
             ballX = canvas.width / 2;
             ballY = canvas.height / 2;
-            dx = -dx; // Change the ball direction
+            dx = -dx; // Change the ball direction  // Reset the ball to the center after a score
         }
     }
 
-    // Top and bottom collision
+    // Top and bottom wall collision
     if (ballY + dy > canvas.height - ballRadius || ballY + dy < ballRadius) {
         dy = -dy;
     }
@@ -188,7 +192,7 @@ function displayWinner() {
     ctx.fillStyle = "#FFD700"; // Gold color for winner
     ctx.textAlign = "center";
     ctx.fillText(winner + " Wins!", canvas.width / 2, canvas.height / 2);
-    pausePlayButton.textContent = "Start Game"; // Change button to allow a new game start
+    pausePlayButton.textContent = "Pause"; // Change button to allow a new game start
 }
 
 function handlePaddleInput() {
@@ -229,9 +233,9 @@ let activeFruit = null;
 
 const fruits = [
     { name: "apple", effect: "speedUpBall", duration: 10000 },
-    { name: "banana", effect: "shrinkPaddles", duration: 10000 }
+    { name: "banana", effect: "shrinkPaddles", duration: 10000 },
+    { name: "orange", effect: "increaseScore", duration: 0 }  // No duration needed for score effect
 ];
-
 const fruitImages = {};
 fruits.forEach(fruit => {
     let img = new Image();
@@ -299,7 +303,23 @@ function applyFruitEffect(effect, duration) {
                 paddleHeight *= 2;
             }, duration);
             break;
+        case "increaseScore":
+            if (lastCollision === "player1") {
+                scoreRight += 2;  // Award 2 points to Player 2
+            } else if (lastCollision === "player2") {
+                scoreLeft += 2;  // Award 2 points to Player 1
+            }
+            break;
+    }
+
+    // Additional point logic for non-score effects
+    if (effect !== "increaseScore") {
+        if (lastCollision === "player1") {
+            scoreRight++;  // Player 2 gets the point
+        } else if (lastCollision === "player2") {
+            scoreLeft++;  // Player 1 gets the point
+        }
     }
 }
 
-setInterval(spawnFruit, 10000); // Spawn fruits every 10 seconds
+setInterval(spawnFruit, 8000); // Spawn fruits every 10 seconds
