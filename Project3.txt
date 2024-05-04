@@ -1,0 +1,15 @@
+github: bwkoenig27
+netId: bwkoenig
+-[x] controllable paddle via arrows and wasd
+-[x] Ball correctly bounces off walls and paddles
+-[x] The game Ends after 11 points
+-[x] Clear visual distinction between game elements
+-[x] Score display works and is well placed
+-[x] different difficulties such as smaller paddle(banana) or faster pace(apple) by hitting different fruit
+-[x] includes a single-player mode against a bot
+-[x] Display Winner Screen
+-[x] screen flashes green for when player1 scores, and red for player2
+-[x] apple and banana worth 1 point, orange is worth 2
+-[x] new game option to restart
+-[x] pause/resume functionality
+

@@ -3,8 +3,8 @@ const ctx = canvas.getContext('2d');
 canvas.width = 800; 
 canvas.height = 500; 
 
-let paddleHeight = 75; // Making the paddle taller for vertical orientation
-let paddleWidth = 10; // Thinner width for vertical orientation
+let paddleHeight = 75; 
+let paddleWidth = 10; 
 let paddleYLeft = (canvas.height - paddleHeight) / 2; 
 let paddleYRight = (canvas.height - paddleHeight) / 2; 
 
@@ -19,12 +19,12 @@ let scoreRight = 0;
 let ballRadius = 10;
 let ballX = canvas.width / 2;
 let ballY = canvas.height / 2;
-let dx = 2; // Velocity in the x direction
-let dy = 2; // Velocity in the y direction
+let dx = 2; 
+let dy = 2; 
 
 let scoreEffectActive = false;
 let scoreEffectRadius = 0;
-let maxScoreEffectRadius = 50; // Maximum size of the circle effect
+let maxScoreEffectRadius = 50;
 let scoreEffectOpacity = 1.0;
 
 let animationFrameId = null;
@@ -155,9 +155,8 @@ function updateBallPosition() {
 
     if (scoreLeft >= 11 || scoreRight >= 11) {
         displayWinner();
-        return; // Stop the game loop if a player wins
+        return; // Stop loop if a player wins
     }
-
     // Left and right wall collision
     if (ballX + dx > canvas.width - ballRadius || ballX + dx < ballRadius) {
         if (ballY > paddleYRight && ballY < paddleYRight + paddleHeight && dx > 0) {
@@ -178,10 +177,9 @@ function updateBallPosition() {
             }
             ballX = canvas.width / 2;
             ballY = canvas.height / 2;
-            dx = -dx; // Change the ball direction  // Reset the ball to the center after a score
+            dx = -dx; // Change the ball direction 
         }
     }
-
     // Top and bottom wall collision
     if (ballY + dy > canvas.height - ballRadius || ballY + dy < ballRadius) {
         dy = -dy;
@@ -190,10 +188,10 @@ function updateBallPosition() {
 function displayWinner() {
     const winner = scoreLeft >= 11 ? "Player 2" : "Player 1";
     ctx.font = "30px 'Press Start 2P', cursive";
-    ctx.fillStyle = "#FFD700"; // Gold color for winner
+    ctx.fillStyle = "#FFD700"; // Gold 
     ctx.textAlign = "center";
     ctx.fillText(winner + " Wins!", canvas.width / 2, canvas.height / 2);
-    pausePlayButton.textContent = "Pause"; // Change button to allow a new game start
+    pausePlayButton.textContent = "Pause"; 
 }
 
 function handlePaddleInput() {
@@ -219,25 +217,22 @@ function draw() {
     drawScoreboard();
     drawFruits();
     checkFruitCollisions();
-
-    if (!scoreEffectActive) { // Only handle inputs if not showing score effect
+    if (!scoreEffectActive) { 
         handlePaddleInput();
     }
-
     score1.textContent = scoreRight;
     score2.textContent = scoreLeft;
-
     animationFrameId = requestAnimationFrame(draw);
 }
 
 // Fruit Settings
-const FRUIT_SIZE = 100; // Display size for fruits
+const FRUIT_SIZE = 100; 
 let activeFruit = null;
 
 const fruits = [
     { name: "apple", effect: "speedUpBall", duration: 10000 },
     { name: "banana", effect: "shrinkPaddles", duration: 10000 },
-    { name: "orange", effect: "increaseScore", duration: 0 }  // No duration needed for score effect
+    { name: "orange", effect: "increaseScore", duration: 0 }  
 ];
 const fruitImages = {};
 fruits.forEach(fruit => {
@@ -255,7 +250,7 @@ function spawnFruit() {
             x: Math.random() * (canvas.width - FRUIT_SIZE) + FRUIT_SIZE / 2,
             y: Math.random() * (canvas.height - FRUIT_SIZE) + FRUIT_SIZE / 2
         };
-        setTimeout(() => { activeFruit = null; }, 7000); // Remove fruit after 7 seconds
+        setTimeout(() => { activeFruit = null; }, 7000); 
     }
 }
 
@@ -308,9 +303,9 @@ function applyFruitEffect(effect, duration) {
             break;
         case "increaseScore":
             if (lastCollision === "player1") {
-                scoreRight += 2;  // Award 2 points to Player 2
+                scoreRight += 2;  // 2 points for hitting orange
             } else if (lastCollision === "player2") {
-                scoreLeft += 2;  // Award 2 points to Player 1
+                scoreLeft += 2;  // 2 points for hitting orange
             }
             break;
     }
@@ -325,7 +320,7 @@ function applyFruitEffect(effect, duration) {
     }
 }
 
-setInterval(spawnFruit, 8000); // Spawn fruits every 10 seconds
+setInterval(spawnFruit, 8000);
 
 let aiMode = false;
 const aiModeToggle = document.getElementById('aiModeToggle');
@@ -334,10 +329,8 @@ document.getElementById('aiModeToggle').addEventListener('change', function() {
     aiMode = this.checked;
     if(aiMode) {
         console.log("AI Mode Enabled");
-        // Additional logic to activate AI control
     } else {
         console.log("AI Mode Disabled");
-        // Additional logic to revert to normal player control
     }
 });
 
@@ -370,7 +363,6 @@ function resetGame() {
 }
 
 function aiControlPaddle() {
-    // Simple AI to control the left paddle
     if (ballY > paddleYLeft + paddleHeight / 2 + 10) {
         paddleYLeft = Math.min(paddleYLeft + 5, canvas.height - paddleHeight);
     } else if (ballY < paddleYLeft + paddleHeight / 2 - 10) {
